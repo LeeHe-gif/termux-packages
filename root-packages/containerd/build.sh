@@ -2,12 +2,6 @@ TERMUX_PKG_HOMEPAGE=https://containerd.io/
 TERMUX_PKG_DESCRIPTION="An open and reliable container runtime"
 TERMUX_PKG_LICENSE="Apache-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-# Be sure to test docker before pushing an update. With 1.6.24 or
-# 1.7.7 we get the following error:
-# $ sudo docker run -it ubuntu bash
-# docker: Error response from daemon: failed to create task for container: failed to start shim: start failed: io.containerd.runc.v2: create new shim socket: listen unix /data/data/com.termux/files/usr/var/run/containerd/s/3f71828f1d6c1ead43fded842abc9c3cf5857c74c3e0704cd83ab177e17cfe6c: bind: invalid argument: exit status 1: unknown.
-#
-# Above error is fixed by too_long_path.patch
 TERMUX_PKG_VERSION=1.6.21
 TERMUX_PKG_REVISION=5
 TERMUX_PKG_SRCURL=git+https://github.com/containerd/containerd
@@ -37,8 +31,13 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
-	cd "${GOPATH}/src/github.com/containerd/containerd"
-	DESTDIR= make install
-	DESTDIR= make install-man
-	install -Dm 600 ${TERMUX_PKG_BUILDER_DIR}/config.toml ${TERMUX_PREFIX}/etc/containerd/config.toml
+	echo "skip,just to copy"
+}
+
+termux_step_create_debscripts() {
+    # 确保 postinst 脚本是空的，将所有初始化留给 Magisk
+    cat <<- EOF > postinst
+        #!/system/bin/sh
+        exit 0
+EOF
 }

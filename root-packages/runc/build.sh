@@ -1,19 +1,23 @@
 TERMUX_PKG_HOMEPAGE=https://www.opencontainers.org/
 TERMUX_PKG_DESCRIPTION="A tool for spawning and running containers according to the OCI specification"
 TERMUX_PKG_LICENSE="Apache-2.0"
-TERMUX_PKG_MAINTAINER="@termux"
+TERMUX_PKG_MAINTAINER="Custom Builder"
 TERMUX_PKG_VERSION="1.3.0"
 TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://github.com/opencontainers/runc/archive/v${TERMUX_PKG_VERSION}.tar.gz
 TERMUX_PKG_SHA256=3262492ce42bea0919ee1a2d000b6f303fd14877295bc38d094876b55fdd448b
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_DEPENDS="libseccomp-static"
+# 移除 on-device 限制（如果存在）
+# TERMUX_PKG_ON_DEVICE_BUILD_NOT_SUPPORTED=true 
 
 termux_step_make() {
+	# Runc 需要链接 liblog，这是 Android 独有的。我们使用 Termux 的 stubs 绕过链接错误。
 	${CC} -c -o stubs.o "$TERMUX_PKG_BUILDER_DIR/stubs.c"
 	${AR} rcs liblog.a stubs.o
 
-	export CGO_LDFLAGS="-L$TERMUX_PKG_BUILDDIR"
+	# 确保 CGO 链接器能找到我们创建的 liblog.a
+	export CGO_LDFLAGS="-L$TERMUX_PKG_BUILDDIR" 
 
 	termux_setup_golang
 
@@ -22,31 +26,25 @@ termux_step_make() {
 	mkdir -p "${GOPATH}/src/github.com/opencontainers"
 	ln -sf "${TERMUX_PKG_SRCDIR}" "${GOPATH}/src/github.com/opencontainers/runc"
 
+	# 进入源码目录并编译静态二进制文件
 	cd "${GOPATH}/src/github.com/opencontainers/runc" && make static
 }
 
 termux_step_make_install() {
 	cd "${GOPATH}/src/github.com/opencontainers/runc"
-	install -Dm755 runc "${TERMUX_PREFIX}/bin/runc"
+    
+    # 核心修正：将 runc 安装到 /system/bin 对应的临时目录
+	local MAGISK_BIN_DIR="${TERMUX_PREFIX}/bin" 
+	
+	install -Dm755 runc "${MAGISK_BIN_DIR}/runc"
+    
+    echo "Runc installed to temporary path: ${MAGISK_BIN_DIR}/runc"
 }
 
 termux_step_create_debscripts() {
+	# 彻底清空 postinst 脚本，将所有说明留给 Magisk 模块
 	{
-		echo "#!$TERMUX_PREFIX/bin/sh"
-		echo "echo"
-		echo 'echo "RunC requires support for devices cgroup support in kernel."'
-		echo "echo"
-		echo 'echo "If CONFIG_CGROUP_DEVICE was enabled during compile time,"'
-		echo 'echo "you need to run the following commands (as root) in order"'
-		echo 'echo "to use the RunC:"'
-		echo "echo"
-		echo 'echo "  mount -t tmpfs -o mode=755 tmpfs /sys/fs/cgroup"'
-		echo 'echo "  mkdir -p /sys/fs/cgroup/devices"'
-		echo 'echo "  mount -t cgroup -o devices cgroup /sys/fs/cgroup/devices"'
-		echo "echo"
-		echo 'echo "If you got error when running commands listed above, this"'
-		echo 'echo "usually means that your kernel lacks CONFIG_CGROUP_DEVICE."'
-		echo "echo"
+		echo "#!/system/bin/sh"
 		echo "exit 0"
 	} > postinst
 }

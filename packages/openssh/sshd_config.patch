@@ -8,7 +8,7 @@ diff -uNr openssh-portable-V_9_9_P1/sshd_config openssh-portable-V_9_9_P1.mod/ss
 -#Port 22
 +Include /etc/ssh/sshd_config.d/*.conf
 +
-+#Port 8022
++#Port 2222
  #AddressFamily any
  #ListenAddress 0.0.0.0
  #ListenAddress ::

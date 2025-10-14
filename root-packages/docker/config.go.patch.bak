@@ -8,12 +8,3 @@
  	"github.com/pkg/errors"
  )
  
-@@ -36,7 +36,7 @@
- 
- func getHomeDir() string {
- 	if homeDir == "" {
--		homeDir = homedir.Get()
-+		homeDir = "@TERMUX_HOME@"
- 	}
- 	return homeDir
- }

@@ -1,4 +1,4 @@
-#!@TERMUX_PREFIX@/bin/sh
+#!/system/bin/sh
 
 # Run `sv-enable ssh-agent` and add the following to your bashrc (or
 # equivalent) to use ssh-agent:
