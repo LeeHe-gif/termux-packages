@@ -1,14 +1,13 @@
 --- a/sshd.c
 +++ b/sshd.c
-@@ -33,6 +33,11 @@
- #include <sys/types.h>
- #include <sys/ioctl.h>
- #include <sys/socket.h>
-+#include <pwd.h>
+@@ -48,6 +48,10 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <limits.h>
 +
-+/* Android NDK 可能缺少 endpwent 声明 */
-+void endpwent(void);
++/* Android compatibility for missing endpwent */
++void endpwent(void) { /* No-op implementation */ }
 +
- #ifdef HAVE_SYS_STAT_H
- # include <sys/stat.h>
- #endif
+ #ifdef WITH_OPENSSL
+ #include <openssl/evp.h>
+ #include <openssl/rand.h>
