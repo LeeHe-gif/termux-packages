@@ -1,0 +1,37 @@
+  GNU nano 7.2                                   pwd.h.patch *                                          +++ ./usr/include/pwd.h 2025-05-09 18:50:20.961428595 +0000
+@@ -89,13 +89,58 @@
+ struct passwd* _Nullable getpwent(void) __INTRODUCED_IN(26);
+
+ void setpwent(void) __INTRODUCED_IN(26);
+-void endpwent(void) __INTRODUCED_IN(26);
+ #endif /* __BIONIC_AVAILABILITY_GUARD(26) */
+
+
+ int getpwnam_r(const char* _Nonnull __name, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_> int getpwuid_r(uid_t __uid, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct pa>
++#ifdef __TERMUX_BUILD__
++static void android_setup_pwd(struct passwd* pw) {
++       char const* result = "@TERMUX_PREFIX@/bin/login";
++       if (result == NULL || access(result, /*X_OK*/1) == -1) {
++               pw->pw_shell = "@TERMUX_PREFIX@/bin/bash";
++       } else {
++               pw->pw_shell = (char*) result;
++       }
++       pw->pw_dir = "@TERMUX_HOME@";
++       pw->pw_passwd = "*";
++#ifdef __LP64__
++       pw->pw_gecos = ""; /* Avoid NULL field. */
++#endif
++}
++#else
++// 原生安卓：空实现或最小化配置
++static void android_setup_pwd(struct passwd* pw) {
++    // 什么都不做，使用系统默认值
++}
++#endif
++static void endpwent(void) { /* Do nothing. */ }
++
++#define getpwnam android_polyfill_getpwnam
++#define getpwuid android_polyfill_getpwu
+ __END_DECLS
+
+ #endif
