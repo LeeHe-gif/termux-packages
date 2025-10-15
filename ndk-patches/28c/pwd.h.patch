@@ -1,14 +1,16 @@
---- pwd.h	2025-10-15 12:39:26.807532017 +0000
-+++ pwd.h	2025-10-15 12:41:32.079553710 +0000
-@@ -188,6 +188,11 @@
- extern int getpw (__uid_t __uid, char *__buffer);
- #endif
+diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pwd.h ./usr/include/pwd.h
+--- /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pwd.h	2024-11-14 00:52:25.000000000 +0000
++++ ./usr/include/pwd.h	2025-05-09 18:50:20.961428595 +0000
+@@ -92,11 +92,10 @@
+ void endpwent(void) __INTRODUCED_IN(26);
+ #endif /* __BIONIC_AVAILABILITY_GUARD(26) */
  
-+int access(const char* __path, int __mode);
 +
-+static void endpwent(void) { /* Do nothing. */ }
-+
-+
+ int getpwnam_r(const char* _Nonnull __name, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
+ int getpwuid_r(uid_t __uid, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
+ 
+-static void endpwent(void) { /* Do nothing. */ }
+-
  __END_DECLS
  
- #endif /* pwd.h  */
+ #endif
