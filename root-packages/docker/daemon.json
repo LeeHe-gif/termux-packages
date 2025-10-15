@@ -1,9 +1,9 @@
 {
-    "data-root": "@TERMUX_PREFIX@/lib/docker",
-    "exec-root": "@TERMUX_PREFIX@/var/run/docker",
-    "pidfile": "@TERMUX_PREFIX@/var/run/docker.pid",
+    "data-root": "/data/docker/lib/docker",
+    "exec-root": "/data/docker/var/run/docker",
+    "pidfile": "/data/docker/var/run/docker.pid",
     "hosts": [
-        "unix://@TERMUX_PREFIX@/var/run/docker.sock"
+        "unix:///data/docker/var/run/docker.sock"
     ],
     "storage-driver": "overlay2"
 }
