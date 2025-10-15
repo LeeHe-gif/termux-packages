@@ -1,12 +1,14 @@
---- sshd.c.org	2025-10-15 11:18:10.359621993 +0000
-+++ sshd.c	2025-10-15 11:29:41.235221131 +0000
-@@ -96,6 +96,9 @@
- #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
- #define REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
+--- pwd.h.org	2025-10-15 12:39:26.807532017 +0000
++++ pwd.h	2025-10-15 12:41:32.079553710 +0000
+@@ -188,6 +188,11 @@
+ extern int getpw (__uid_t __uid, char *__buffer);
+ #endif
  
-+/* Android compatibility for missing endpwent */
++int access(const char* __path, int __mode);
++
 +static void endpwent(void) { /* Do nothing. */ }
 +
- extern char *__progname;
++
+ __END_DECLS
  
- /* Server configuration options. */
+ #endif /* pwd.h  */
