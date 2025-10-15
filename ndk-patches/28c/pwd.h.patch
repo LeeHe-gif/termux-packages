@@ -18,4 +18,5 @@ diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86
 +
  __END_DECLS
  
- #endif /* pwd.h  */
+
+ #endif
