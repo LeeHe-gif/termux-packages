@@ -30,8 +30,6 @@
 +#endif
 +static void endpwent(void) { /* Do nothing. */ }
 +
-+#define getpwnam android_polyfill_getpwnam
-+#define getpwuid android_polyfill_getpwu
  __END_DECLS
 
  #endif
