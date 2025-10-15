@@ -1,22 +1,12 @@
-diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pwd.h ./usr/include/pwd.h
---- /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/pwd.h	2024-11-14 00:52:25.000000000 +0000
-+++ ./usr/include/pwd.h	2025-05-09 18:50:20.961428595 +0000
-@@ -89,13 +89,58 @@
- struct passwd* _Nullable getpwent(void) __INTRODUCED_IN(26);
+--- sshd.c.org	2025-10-15 11:18:10.359621993 +0000
++++ sshd.c	2025-10-15 11:29:41.235221131 +0000
+@@ -96,6 +96,9 @@
+ #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
+ #define REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
  
- void setpwent(void) __INTRODUCED_IN(26);
--void endpwent(void) __INTRODUCED_IN(26);
- #endif /* __BIONIC_AVAILABILITY_GUARD(26) */
- 
- 
- int getpwnam_r(const char* _Nonnull __name, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
- int getpwuid_r(uid_t __uid, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
- 
-+int access(const char* __path, int __mode);
-+
++/* Android compatibility for missing endpwent */
 +static void endpwent(void) { /* Do nothing. */ }
 +
- __END_DECLS
+ extern char *__progname;
  
-
- #endif
+ /* Server configuration options. */
