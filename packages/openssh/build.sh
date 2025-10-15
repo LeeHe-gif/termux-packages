@@ -77,7 +77,7 @@ termux_step_post_configure() {
 }
 
 termux_step_make_install() {
-	mkdir ~/sshdbuild
+	mkdir -p ~/sshdbuild
 	cd ~/.termux-build/openssh/build/
 	zip sshdbuild.zip scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth sshd-session ssh-keygen ssh-keyscan ssh-pkcs11-helper ssh-sk-helper
 	mv sshdbuild.zip ~/sshdbuild
