@@ -7,7 +7,7 @@ diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86
  #define _PATH_TTY "/dev/tty"
 +
 +#define        _PATH_STDPATH   _PATH_DEFPATH
-+#define        _PATH_TMP       "@TERMUX_PREFIX@/tmp/"
-+#define        _PATH_VARDB     "@TERMUX_PREFIX@/var/db/"
-+#define        _PATH_VARRUN    "@TERMUX_PREFIX@/var/run/"
-+#define        _PATH_VARTMP    "@TERMUX_PREFIX@/var/tmp/"
++#define        _PATH_TMP       "/data/local/tmp/"
++#define        _PATH_VARDB     "/data/local/var/db/"
++#define        _PATH_VARRUN    "/data/local/var/run/"
++#define        _PATH_VARTMP    "/data/local/var/tmp/"
