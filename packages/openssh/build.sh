@@ -53,7 +53,7 @@ ac_cv_func_bzero=yes
 "
 
 # 仅构建核心二进制文件
-TERMUX_PKG_MAKE_BUILD_TARGET="sshd ssh ssh-keygen scp sftp sftp-server"
+TERMUX_PKG_MAKE_BUILD_TARGET="sshd ssh ssh-keygen scp sftp sftp-server sshd-session"
 TERMUX_PKG_MAKE_INSTALL_TARGET="" 
 TERMUX_PKG_RM_AFTER_INSTALL=""
 TERMUX_PKG_CONFFILES="" 
@@ -77,7 +77,7 @@ termux_step_post_configure() {
 }
 
 termux_step_make_install() {
-	local binaries_to_package=(scp sftp sftp-server ssh ssh-add ssh-agent sshd ssh-keygen ssh-keyscan)
+	local binaries_to_package=(scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth ssh-keygen ssh-keyscan ssh-keysign)
 	
 	# ==============================================================================
 	#  ↓↓↓ 这是最终的、决定性的“净化”步骤 ↓↓↓
