@@ -77,7 +77,7 @@ termux_step_post_configure() {
 }
 
 termux_step_make_install() {
-	local binaries_to_package=(scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth ssh-keygen ssh-keyscan ssh-keysign)
+	local binaries_to_package=(scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth sshd-session ssh-keygen ssh-keyscan ssh-keysign)
 	
 	# ==============================================================================
 	#  ↓↓↓ 这是最终的、决定性的“净化”步骤 ↓↓↓
