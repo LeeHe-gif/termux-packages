@@ -1,4 +1,12 @@
-98a99,101
-> /* Android compatibility for missing endpwent */
-> void endpwent(void) { /* No-op implementation */ }
-> 
+--- sshd.c.org	2025-10-15 11:18:10.359621993 +0000
++++ sshd.c	2025-10-15 11:19:02.010217922 +0000
+@@ -96,6 +96,9 @@
+ #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
+ #define REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
+ 
++/* Android compatibility for missing endpwent */
++void endpwent(void) { /* No-op implementation */ }
++
+ extern char *__progname;
+ 
+ /* Server configuration options. */
