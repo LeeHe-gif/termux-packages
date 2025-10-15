@@ -77,13 +77,41 @@ termux_step_post_configure() {
 }
 
 termux_step_make_install() {
-	rm ~/sshdbuild
-	mkdir -p ~/sshdbuild
-	cd ~/.termux-build/openssh/build/
-	zip sshdbuild.zip scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth sshd-session ssh-keygen ssh-keyscan ssh-pkcs11-helper ssh-sk-helper
-	mv sshdbuild.zip ~/sshdbuild
-	echo "ZIP done! check it in ~/sshdbuild !"
-	:
+	local binaries_to_package=(scp sftp sftp-server ssh ssh-add ssh-agent sshd ssh-keygen ssh-keyscan)
+	
+	# ==============================================================================
+	#  ↓↓↓ 这是最终的、决定性的“净化”步骤 ↓↓↓
+	# ==============================================================================
+	echo "Purifying compiled binaries with patchelf..."
+	for bin in "${binaries_to_package[@]}"; do
+		if [ -f "$TERMUX_PKG_BUILDDIR/$bin" ]; then
+			echo "Purifying $bin..."
+			# 强行擦除硬编码的 Termux RPATH，替换为安卓系统的标准库路径
+			patchelf --set-rpath "/system/lib64:/vendor/lib64" "$TERMUX_PKG_BUILDDIR/$bin"
+		fi
+	done
+	echo "Purification complete."
+
+	local user_zip_dir=~/sshd-build
+	mkdir -p "$user_zip_dir"
+	local system_check_dir="$TERMUX_PKG_MASSAGEDIR/system/bin"
+	mkdir -p "$system_check_dir"
+
+	echo "Copying purified binaries..."
+	for bin in "${binaries_to_package[@]}"; do
+		if [ -f "$TERMUX_PKG_BUILDDIR/$bin" ]; then
+			cp -v "$TERMUX_PKG_BUILDDIR/$bin" "$user_zip_dir/"
+			cp -v "$TERMUX_PKG_BUILDDIR/$bin" "$system_check_dir/"
+		else
+			echo "Warning: Binary '$bin' not found in build directory."
+		fi
+	done
+
+	echo "Creating zip archive..."
+	cd "$user_zip_dir"
+	zip -r ~/sshd-build.zip .
+	
+	echo "sshd-build.zip has been created in your home directory (~/)!"
 }
 
 termux_step_post_make_install() { 
