@@ -35,7 +35,7 @@ diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86
 +#ifdef __TERMUX_BUILD__
 +static inline void endpwent(void) { /* Do nothing */ }
 +#endif
-
++
  __END_DECLS
  
  #endif
