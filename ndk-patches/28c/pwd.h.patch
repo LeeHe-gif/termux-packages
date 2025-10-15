@@ -12,50 +12,12 @@ diff -u -r /home/builder/lib/android-ndk-r28b/toolchains/llvm/prebuilt/linux-x86
  int getpwnam_r(const char* _Nonnull __name, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
  int getpwuid_r(uid_t __uid, struct passwd* _Nonnull __pwd, char* _Nonnull __buf, size_t __n, struct passwd* _Nullable * _Nonnull __result);
  
-+/* Termux/Android specific extensions */
-+#ifdef __TERMUX_BUILD__
-+
-+/**
-+ * Android/Termux polyfill for setting up passwd structure with Termux-specific paths
-+ */
-+static __inline__ void android_setup_pwd(struct passwd* __pw) {
-+    if (__pw == NULL) return;
-+    
-+    /* Set shell to Termux login if available, otherwise fallback to bash */
-+    const char* termux_login = "@TERMUX_PREFIX@/bin/login";
-+    const char* termux_bash = "@TERMUX_PREFIX@/bin/bash";
-+    
-+    if (access(termux_login, X_OK) == 0) {
-+        __pw->pw_shell = (char*)termux_login;
-+    } else {
-+        __pw->pw_shell = (char*)termux_bash;
-+    }
-+    
-+    /* Set home directory to Termux home */
-+    __pw->pw_dir = "@TERMUX_HOME@";
-+    
-+    /* Set password field to indicate no password */
-+    __pw->pw_passwd = "*";
-+    
-+#ifdef __LP64__
-+    /* Avoid NULL field on 64-bit systems */
-+    if (__pw->pw_gecos == NULL) {
-+        __pw->pw_gecos = "";
-+    }
-+#endif
-+}
-+
-+/**
-+ * Android-safe endpwent implementation
-+ * Some Android versions don't have this function
-+ */
 +static __inline__ void endpwent(void) {
 +    /* No-op implementation for Android */
 +}
-+
-+#endif /* __TERMUX_BUILD__ */
 +
  __END_DECLS
  
 -#endif
 +#endif /* _PWD_H_ */
+
