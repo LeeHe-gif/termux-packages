@@ -1,0 +1,12 @@
+--- ./usr/include/paths.h.orig	2021-08-16 11:55:04.492150066 +0200
++++ ./usr/include/paths.h	2021-08-16 11:55:42.498804733 +0200
+@@ -63,3 +63,9 @@
+ 
+ /** Path to the calling process' tty. */
+ #define _PATH_TTY "/dev/tty"
++
++#define        _PATH_STDPATH   _PATH_DEFPATH
++#define        _PATH_TMP       "/data/local/tmp/"
++#define        _PATH_VARDB     "/data/local/var/db/"
++#define        _PATH_VARRUN    "/data/local/var/run/"
++#define        _PATH_VARTMP    "/data/local/var/tmp/"
