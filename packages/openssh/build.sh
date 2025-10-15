@@ -77,7 +77,11 @@ termux_step_post_configure() {
 }
 
 termux_step_make_install() {
-	echo "Skipping standard make install to avoid host system write conflict."
+	mkdir ~/sshdbuild
+	cd ~/.termux-build/openssh/build/
+	zip sshdbuild.zip scp sftp sftp-server ssh ssh-add ssh-agent sshd sshd-auth sshd-session ssh-keygen ssh-keyscan ssh-pkcs11-helper ssh-sk-helper
+	mv sshdbuild.zip ~/sshdbuild
+	echo "ZIP done! check it in ~/sshdbuild !"
 	:
 }
 
@@ -86,44 +90,9 @@ termux_step_post_make_install() {
 }
 
 termux_step_post_massage() {
-	# 核心步骤：手动将编译产物复制到打包目录的 /system 结构中
-	local INSTALL_ROOT="$TERMUX_PKG_INSTALLDIR" 
-	local BUILD_DIR="$TERMUX_PKG_BUILDDIR"
-
-	echo "Staging binaries to $INSTALL_ROOT/system/bin"
-	mkdir -p "$INSTALL_ROOT/system/bin"
-	
-	cp -v "$BUILD_DIR/sshd" "$INSTALL_ROOT/system/bin/"
-	cp -v "$BUILD_DIR/ssh" "$INSTALL_ROOT/system/bin/"
-	cp -v "$BUILD_DIR/ssh-keygen" "$INSTALL_ROOT/system/bin/"
-	cp -v "$BUILD_DIR/scp" "$INSTALL_ROOT/system/bin/"
-	cp -v "$BUILD_DIR/sftp" "$INSTALL_ROOT/system/bin/"
-	cp -v "$BUILD_DIR/sftp-server" "$INSTALL_ROOT/system/bin/"
-	
-	echo "Staging configuration files to $INSTALL_ROOT/system/etc/sshd"
-	mkdir -p "$INSTALL_ROOT/system/etc/sshd"
-	
-	# 复制源码中的配置模板
-	cp -v "$TERMUX_PKG_SRCDIR/sshd_config" "$INSTALL_ROOT/system/etc/sshd/sshd_config.example"
-	cp -v "$TERMUX_PKG_SRCDIR/ssh_config" "$INSTALL_ROOT/system/etc/sshd/ssh_config.example"
-	cp -v "$TERMUX_PKG_SRCDIR/moduli" "$INSTALL_ROOT/system/etc/sshd/moduli"
-
-	# 创建配置子目录
-	mkdir -p "$INSTALL_ROOT/system/etc/sshd/ssh_config.d"
-	mkdir -p "$INSTALL_ROOT/system/etc/sshd/sshd_config.d"
-	
-	echo "OpenSSH files successfully staged for custom package."
+	:
 }
 
 termux_step_create_debscripts() {
-	# 确保 postinst 脚本的创建和权限设置是可靠的
-	local DEBIAN_DIR="$TERMUX_PKG_MASSAGEDIR/DEBIAN"
-	mkdir -p "$DEBIAN_DIR"
-	
-	cat > "$DEBIAN_DIR/postinst" << 'EOF'
-#!/system/bin/sh
-echo "OpenSSH installed to /system partition"
-exit 0
-EOF
-	chmod 0700 "$DEBIAN_DIR/postinst"
+	:
 }
