@@ -29,40 +29,63 @@ termux_step_make() {
 	make -j ${TERMUX_PKG_MAKE_PROCESSES} man)
 
 }
-
 termux_step_make_install() {
-        local binaries_to_package=(containerd containerd-shim-runc-v1 containerd-stress ctr containerd-shim containerd-shim-runc-v2)
+	echo "Entering custom install and purification step..."
 
-        echo "Purifying compiled binaries with patchelf..."
-        for bin in "${binaries_to_package[@]}"; do
-                if [ -f "$TERMUX_PKG_BUILDDIR/$bin" ]; then
-                        echo "Purifying $bin..."
-                        # 强行擦除硬编码的 Termux RPATH，替换为安卓系统的标准库路径
-                        patchelf --set-rpath "/system/lib64:/vendor/lib64" "$TERMUX_PKG_BUILDDIR/$bin"
-                fi
-        done
-        echo "Purification complete."
+	# --- 1. Define the Binaries to Purify and Package ---
+	# These are the files you found in the build output directory.
+	local -a BINARIES=(
+		"containerd"
+		"containerd-shim"
+		"containerd-shim-runc-v1"
+		"containerd-shim-runc-v2"
+		"containerd-stress"
+		"ctr"
+	)
 
-        local user_zip_dir=~/containerd-build
-        mkdir -p "$user_zip_dir"
-        local system_check_dir="$TERMUX_PKG_MASSAGEDIR/system/bin"
-        mkdir -p "$system_check_dir"
+	# --- 2. Locate the Build Directory ---
+	# This is the path where the compiled binaries are located.
+	local BUILD_DIR="${TERMUX_PKG_BUILDDIR}/bin"
+	
+	# --- 3. Purify Binaries with patchelf ---
+	echo "Purifying compiled binaries with patchelf..."
+	for binary in "${BINARIES[@]}"; do
+		if [ -f "$BUILD_DIR/$binary" ]; then
+			echo "Purifying $binary..."
+			# First, remove the old, incorrect RPATH set by the build system.
+			patchelf --remove-rpath "$BUILD_DIR/$binary"
+			# Then, set a new, correct RPATH for a native Android system.
+			patchelf --set-rpath '/system/lib64:/vendor/lib64' "$BUILD_DIR/$binary"
+		else
+			echo "Warning: Binary $binary not found in $BUILD_DIR, skipping."
+		fi
+	done
+	echo "Purification complete."
 
-        echo "Copying purified binaries..."
-        for bin in "${binaries_to_package[@]}"; do
-                if [ -f "$TERMUX_PKG_BUILDDIR/$bin" ]; then
-                        cp -v "$TERMUX_PKG_BUILDDIR/$bin" "$user_zip_dir/"
-                        cp -v "$TERMUX_PKG_BUILDDIR/$bin" "$system_check_dir/"
-                else
-                        echo "Warning: Binary '$bin' not found in build directory."
-                fi
-        done
+	# --- 4. Package into a Zip File ---
+	local ZIP_DIR="$HOME/containerd-build"
+	mkdir -p "$ZIP_DIR"
+	echo "Copying purified binaries to $ZIP_DIR..."
+	for binary in "${BINARIES[@]}"; do
+		if [ -f "$BUILD_DIR/$binary" ]; then
+			cp -v "$BUILD_DIR/$binary" "$ZIP_DIR/"
+		fi
+	done
 
-        echo "Creating zip archive..."
-        cd "$user_zip_dir"
-        zip -r ~/containerd-build.zip .
-
-        echo "containerd.zip has been created in your home directory (~/)!"
+	echo "Creating zip archive..."
+	(cd "$ZIP_DIR" && zip -r "$HOME/containerd-build.zip" ./*)
+	echo "containerd-build.zip has been created in your home directory (~/)!"
+	
+	# --- 5. Appease the Build System to Avoid Errors ---
+	# We copy some files to the official installation directory so that the
+	# build script doesn't complain about an empty package.
+	local MASSAGE_BIN_DIR="$TERMUX_PKG_MASSAGEDIR/system/bin"
+	mkdir -p "$MASSAGE_BIN_DIR"
+	for binary in "${BINARIES[@]}"; do
+		if [ -f "$BUILD_DIR/$binary" ]; then
+			cp -v "$BUILD_DIR/$binary" "$MASSAGE_BIN_DIR/"
+		fi
+	done
 }
 
 termux_step_create_debscripts() {
