@@ -31,55 +31,44 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
-	echo "Entering custom install and purification step..."
+	echo "Entering custom install step using your direct path..."
 
-	# --- 1. Define the Binaries to Purify and Package ---
-	local -a BINARIES=(
-		"containerd"
-		"containerd-shim"
-		"container-shim-runc-v1" # Corrected typo from previous logs if any
-		"containerd-shim-runc-v2"
-		"containerd-stress"
-		"ctr"
-	)
+	# --- 1. Define the EXACT Path You Found ---
+	# This is the "simple method" - no searching, just go straight to the location.
+	local BUILD_DIR_EXACT="$HOME/.termux-build/containerd/build/go/src/github.com/containerd/containerd/bin"
 
-	# --- 2. Create Destination Directories ---
-	local ZIP_DIR="$HOME/containerd-build"
-	local MASSAGE_BIN_DIR="$TERMUX_PKG_MASSAGEDIR/system/bin"
-	mkdir -p "$ZIP_DIR"
-	mkdir -p "$MASSAGE_BIN_DIR"
+	# A safety check to make sure the directory exists
+	if [ ! -d "$BUILD_DIR_EXACT" ]; then
+		echo "ERROR: The expected build output directory does not exist!"
+		echo "Expected path: $BUILD_DIR_EXACT"
+		exit 1
+	fi
+	
+	echo "Found binaries in: $BUILD_DIR_EXACT"
 
-	echo "Searching for, purifying, and copying binaries..."
-
-	# --- 3. Find, Purify, and Copy Each Binary ---
-	for binary in "${BINARIES[@]}"; do
-		# Use 'find' to locate the binary anywhere within the build directory.
-		# The -print -quit makes it stop after the first find, for efficiency.
-		local binary_path
-		binary_path=$(find "$TERMUX_PKG_BUILDDIR" -name "$binary" -type f -print -quit)
-
-		if [ -n "$binary_path" ]; then
-			echo "Found '$binary' at: $binary_path"
-
-			# Purify the binary at its found location
-			echo "Purifying $binary..."
-			patchelf --remove-rpath "$binary_path"
-			patchelf --set-rpath '/system/lib64:/vendor/lib64' "$binary_path"
-
-			# Copy the purified binary to both destinations
-			echo "Copying $binary..."
-			cp -v "$binary_path" "$ZIP_DIR/"
-			cp -v "$binary_path" "$MASSAGE_BIN_DIR/"
-		else
-			echo "Warning: Binary '$binary' not found in build directory, skipping."
+	# --- 2. Purify Binaries in Place ---
+	echo "Purifying compiled binaries with patchelf..."
+	for binary in "$BUILD_DIR_EXACT"/*; do
+		# Check if it's a file and not a directory or zip file
+		if [ -f "$binary" ] && [[ "$binary" != *.zip ]]; then
+			echo "Purifying $(basename "$binary")..."
+			patchelf --remove-rpath "$binary"
+			patchelf --set-rpath '/system/lib64:/vendor/lib64' "$binary"
 		fi
 	done
-	echo "Purification and copy complete."
+	echo "Purification complete."
 
-	# --- 4. Package into a Zip File ---
-	echo "Creating zip archive..."
-	(cd "$ZIP_DIR" && zip -r "$HOME/containerd-build.zip" ./*)
-	echo "containerd-build.zip has been created in your home directory (~/)!"
+	# --- 3. Package into a Zip File (Your Exact Method) ---
+	echo "Creating zip archive from $BUILD_DIR_EXACT..."
+	# We cd into the directory, zip everything, then cd back.
+	(cd "$BUILD_DIR_EXACT" && zip "$HOME/containerd.zip" ./*)
+	echo "containerd.zip has been created in your home directory (~/)!"
+	
+	# --- 4. Appease the Build System ---
+	# We still copy the purified files to the massage dir to avoid the final error.
+	local MASSAGE_BIN_DIR="$TERMUX_PKG_MASSAGEDIR/system/bin"
+	mkdir -p "$MASSAGE_BIN_DIR"
+	cp -v "$BUILD_DIR_EXACT"/* "$MASSAGE_BIN_DIR/"
 }
 
 termux_step_create_debscripts() {
