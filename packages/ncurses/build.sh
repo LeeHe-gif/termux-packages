@@ -49,16 +49,14 @@ am_cv_langinfo_codeset=no
 --enable-pc-files
 --enable-termcap
 --enable-widec
---mandir=$TERMUX_PREFIX/share/man
 --without-ada
 --without-cxx-binding
 --without-debug
 --without-tests
 --with-normal
---with-pkg-config-libdir=$TERMUX_PREFIX/lib/pkgconfig
 --with-static
 --with-shared
---with-termpath=$TERMUX_PREFIX/etc/termcap:$TERMUX_PREFIX/share/misc/termcap
+--with-termpath=/etc/termcap
 "
 
 TERMUX_PKG_RM_AFTER_INSTALL="
