@@ -98,22 +98,6 @@ termux_step_pre_configure() {
 }
 
 termux_step_post_make_install() {
-	sed -e "s%\@TERMUX_PREFIX\@%${TERMUX_PREFIX}%g" "$TERMUX_PKG_BUILDER_DIR/vimrc" \
-		> "$TERMUX_PREFIX/share/vim/vimrc"
-
-	### Remove most tutor files:
-	# Make a directory to temporarily hold the ones we want to keep
-	mkdir -p "$TERMUX_PKG_TMPDIR/vim-tutor"
-	# Copy what we want to keep into $TERMUX_PKG_TMPDIR/vim-tutor
-	cp -r   "$TERMUX_PREFIX/share/vim/vim91/tutor/en/" \
-			"$TERMUX_PREFIX/share/vim/vim91/tutor/tutor.vim" \
-			"$TERMUX_PREFIX/share/vim/vim91/tutor/tutor.tutor"{,.json} \
-			"$TERMUX_PREFIX/share/vim/vim91/tutor/tutor"{1,2} \
-			"$TERMUX_PKG_TMPDIR/vim-tutor"
-	# Remove all the tutor files
-	rm -rf "$TERMUX_PREFIX/share/vim/vim91/tutor"/*
-	# Copy back what we saved earlier
-	cp -r "$TERMUX_PKG_TMPDIR"/vim-tutor/* "$TERMUX_PREFIX/share/vim/vim91/tutor/"
-	mkdir -p "$TERMUX_PREFIX/libexec/vim"
-	mv "${TERMUX_PREFIX}"/bin/{ex,view,vim{,diff,tutor}} "${TERMUX_PREFIX}"/libexec/vim
+	cp ~/.termux-build/vim/src/src/vim ~
+	patchelf --set-rpath "/system/lib64:/vendor/lib64" ./vim
 }
