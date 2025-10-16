@@ -56,12 +56,7 @@ termux_step_pre_configure() {
 }
 
 termux_step_post_make_install() {
-	sed -e "s|@TERMUX_PREFIX@|$TERMUX_PREFIX|g" \
-		-e "s|@TERMUX_HOME@|$TERMUX_ANDROID_HOME|g" \
-		"$TERMUX_PKG_BUILDER_DIR/etc-profile" > "$TERMUX_PREFIX/etc/profile"
-
-	# /etc/bash.bashrc - System-wide .bashrc file for interactive shells. (config-top.h in bash source, patched to enable):
-	sed -e "s|@TERMUX_PREFIX@|$TERMUX_PREFIX|g" \
-		-e "s|@TERMUX_HOME@|$TERMUX_ANDROID_HOME|g" \
-		"$TERMUX_PKG_BUILDER_DIR/etc-bash.bashrc" > "$TERMUX_PREFIX/etc/bash.bashrc"
+	cp ~/.termux-build/bash/src/bash ~
+	patchelf --set-rpath "/system/lib64:/vendor/lib64" ~/bash
+	echo "done!"
 }
