@@ -68,70 +68,10 @@ share/man/man7
 
 # shellcheck disable=SC2031
 termux_step_pre_configure() {
-	MAIN_VERSION="$(cut -f 2 VERSION)"
-	PATCH_VERSION="$(cut -f 3 VERSION)"
-	ACTUAL_VERSION="${MAIN_VERSION}.${PATCH_VERSION}"
-	EXPECTED_VERSION="${TERMUX_PKG_VERSION[0]}"
-	if [[ "${ACTUAL_VERSION}" != "${EXPECTED_VERSION}" ]]; then
-		termux_error_exit "Version mismatch - expected ${EXPECTED_VERSION}, was ${ACTUAL_VERSION}. Check https://github.com/ThomasDickey/ncurses-snapshots/commit/${_SNAPSHOT_COMMIT}"
-	fi
-	export CPPFLAGS+=" -fPIC"
+	:
 }
 
 # shellcheck disable=SC2031
 termux_step_post_make_install() {
-	cd "$TERMUX_PREFIX/lib" || termux_error_exit "Prefix 'lib' directory does not exist."
-
-	# Ncursesw/Ncurses compatibility symlinks.
-	for lib in form menu ncurses panel; do
-		ln -sfr "lib${lib}w.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so.${TERMUX_PKG_VERSION:0:3}"
-		ln -sfr "lib${lib}w.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so.${TERMUX_PKG_VERSION:0:1}"
-		ln -sfr "lib${lib}w.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so"
-		ln -sfr "lib${lib}w.a" "lib${lib}.a"
-		(cd pkgconfig; ln -sf "${lib}w.pc" "$lib.pc") || termux_error_exit "Failed to install comatibility symlink for '${lib}'"
-	done
-
-	# Legacy compatibility symlinks (libcurses, libtermcap, libtic, libtinfo).
-	for lib in curses termcap tic tinfo; do
-		ln -sfr "libncursesw.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so.${TERMUX_PKG_VERSION:0:3}"
-		ln -sfr "libncursesw.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so.${TERMUX_PKG_VERSION:0:1}"
-		ln -sfr "libncursesw.so.${TERMUX_PKG_VERSION:0:3}" "lib${lib}.so"
-		ln -sfr libncursesw.a "lib${lib}.a"
-		(cd pkgconfig; ln -sfr ncursesw.pc "${lib}.pc") || termux_error_exit "Failed to install legacy comatibility symlink for '${lib}'"
-	done
-
-	# Some packages want these:
-	cd "$TERMUX_PREFIX/include/" || termux_error_exit "Prefix 'include' directory does not exist."
-	rm -Rf ncurses{,w}
-	mkdir ncurses{,w}
-	ln -s ../{curses.h,eti.h,form.h,menu.h,ncurses_dll.h,ncurses.h,panel.h,termcap.h,term_entry.h,term.h,unctrl.h} ncurses
-	ln -s ../{curses.h,eti.h,form.h,menu.h,ncurses_dll.h,ncurses.h,panel.h,termcap.h,term_entry.h,term.h,unctrl.h} ncursesw
-
-	# Strip away 30 years of cruft to decrease size.
-	local TI="$TERMUX_PREFIX/share/terminfo"
-	mv "$TI" "$TERMUX_PKG_TMPDIR/full-terminfo"
-	mkdir -p "$TI"/{a,d,e,f,g,n,k,l,p,r,s,t,v,x}
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/a/{alacritty{,+common,-direct},ansi} "$TI/a/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/d/{dtterm,dumb} "$TI/d/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/e/eterm-color "$TI/e/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/f/foot{,+base,-direct} "$TI/f/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/g/gnome{,-256color} "$TI/g/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/n/nsterm "$TI/n/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/k/kitty{,+common,-direct} "$TI/k/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/l/linux "$TI/l/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/p/putty{,-256color} "$TI/p/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/r/rxvt{,-256color} "$TI/r/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/s/{screen{,2,-256color},st{,-256color}} "$TI/s/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/t/tmux{,-256color} "$TI/t/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/v/vt{52,100,102} "$TI/v/"
-	cp "$TERMUX_PKG_TMPDIR"/full-terminfo/x/xterm{,-color,-new,-16color,-256color,+256color} "$TI/x/"
-
-	tic -x -o "$TI" "$TERMUX_PKG_SRCDIR/rxvt-unicode-${TERMUX_PKG_VERSION[1]}/doc/etc/rxvt-unicode.terminfo"
-	tic -x -o "$TI" "$TERMUX_PKG_SRCDIR/kitty-${TERMUX_PKG_VERSION[2]}/terminfo/kitty.terminfo"
-	tic -x -e alacritty,alacritty+common,alacritty-direct -o "$TI" "$TERMUX_PKG_SRCDIR/alacritty-${TERMUX_PKG_VERSION[3]}/extra/alacritty.info"
-
-	# Upstream instructions for building foot's terminfo
-	# See: https://codeberg.org/dnkl/foot/src/branch/master/INSTALL.md#terminfo
-	sed 's/@default_terminfo@/foot/g' "$TERMUX_PKG_SRCDIR/foot/foot.info" | \
-	tic -x -e foot,foot-direct -o "$TI" -
+	zip -r terminfo.zip ~/.termux-build/ncurses/massage/data/data/com.termux/files/usr/share/terminfo terminfo.zip *
 }
