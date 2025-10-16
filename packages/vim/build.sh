@@ -99,5 +99,5 @@ termux_step_pre_configure() {
 
 termux_step_post_make_install() {
 	cp ~/.termux-build/vim/src/src/vim ~
-	patchelf --set-rpath "/system/lib64:/vendor/lib64" ./vim
+	patchelf --set-rpath "/system/lib64:/vendor/lib64" ~/vim
 }
