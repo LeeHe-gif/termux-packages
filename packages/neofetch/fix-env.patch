@@ -1,5 +1,5 @@
 --- neofetch	2025-10-16 10:50:48.117309504 +0000
-+++ neofetch.org	2025-10-16 10:50:09.768145939 +0000
++++ neofetch	2025-10-16 10:50:09.768145939 +0000
 @@ -1,4 +1,4 @@
 -#!/system/bin/env bash
 +#!/data/data/com.termux/files/usr/bin/env bash
