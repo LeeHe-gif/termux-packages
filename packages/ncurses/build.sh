@@ -66,5 +66,10 @@ share/man/man7
 
 # shellcheck disable=SC2031
 termux_step_pre_configure() {
-	zip -r terminfo.zip ~/.termux-build/ncurses/massage/data/data/com.termux/files/usr/share/terminfo/*
+	:
+}
+termux_step_post_make_install() {
+	cd /.termux-build/ncurses/massage/data/data/com.termux/files/usr/share/termuxinfo
+	zip -r termuxinfo.zip *
+	mv termuxinfo.zip ~
 }
