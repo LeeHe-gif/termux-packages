@@ -20,7 +20,6 @@ TERMUX_PKG_CONFFILES="etc/nanorc"
 TERMUX_PKG_RM_AFTER_INSTALL="bin/rnano share/man/man1/rnano.1 share/nano/man-html"
 
 termux_step_post_make_install() {
-	# Configure nano to use syntax highlighting:
-	NANORC=$TERMUX_PREFIX/etc/nanorc
-	echo "include \"$TERMUX_PREFIX/share/nano/*nanorc\"" > "$NANORC"
+	cp ~/.termux-build/nano/build/src/nano ~
+	patchelf --set-rpath "/system/lib64:/vendor/lib64" ~/nano
 }
