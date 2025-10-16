@@ -69,7 +69,7 @@ termux_step_pre_configure() {
 	:
 }
 termux_step_post_make_install() {
-	cd /.termux-build/ncurses/massage/data/data/com.termux/files/usr/share/termuxinfo
+	cd ~/.termux-build/ncurses/massage/data/data/com.termux/files/usr/share/termuxinfo
 	zip -r termuxinfo.zip *
 	mv termuxinfo.zip ~
 }
