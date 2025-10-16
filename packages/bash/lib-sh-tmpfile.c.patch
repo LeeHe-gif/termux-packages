@@ -15,7 +15,6 @@ diff -uNr bash-5.0/lib/sh/tmpfile.c bash-5.0.mod/lib/sh/tmpfile.c
 -    return sys_tmpdir;
 -
 -  sys_tmpdir = "/usr/tmp";
-+  sys_tmpdir = "/data/local/var/tmp";
++  sys_tmpdir = "/data/local/tmp";
    if (file_iswdir (sys_tmpdir))
      return sys_tmpdir;
- 
