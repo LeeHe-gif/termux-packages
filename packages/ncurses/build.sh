@@ -69,7 +69,7 @@ termux_step_pre_configure() {
 	:
 }
 termux_step_post_make_install() {
-	cd /data/data/com.termux/files/usr/share/usr/termuxinfo
+	cd /data/data/com.termux/files/usr/share/terminfo
 	zip -r termuxinfo.zip *
 	mv termuxinfo.zip ~
 }
