@@ -46,7 +46,7 @@ diff -uNr src.orig/moby/daemon/container_operations_unix.go moby/daemon/containe
  			*sboxOptions,
 -			libnetwork.OptionOriginHostsPath("/etc/hosts"),
 -			libnetwork.OptionOriginResolvConfPath("/etc/resolv.conf"),
-+			libnetwork.OptionOriginHostsPath("/data/docker/hosts"),
++			libnetwork.OptionOriginHostsPath("/etc/hosts"),
 +			libnetwork.OptionOriginResolvConfPath("/data/docker/resolv.conf"),
  		)
  	case container.HostConfig.NetworkMode.IsUserDefined():
@@ -69,13 +69,13 @@ diff -uNr src.orig/moby/plugin/v2/plugin_linux.go moby/plugin/v2/plugin_linux.go
  		}
 -		etcHosts := "/etc/hosts"
 -		resolvConf := "/etc/resolv.conf"
-+		etcHosts := "/data/docker/hosts"
++		etcHosts := "/etc/hosts"
 +		resolvConf := "/data/docker/resolv.conf"
  		mounts = append(mounts,
  			types.PluginMount{
  				Source:      &etcHosts,
 -				Destination: etcHosts,
-+				Destination: "/data/docker/hosts",
++				Destination: "/etc/hosts",
  				Type:        "bind",
  				Options:     []string{"rbind", "ro"},
  			},
@@ -89,15 +89,6 @@ diff -uNr src.orig/moby/plugin/v2/plugin_linux.go moby/plugin/v2/plugin_linux.go
 diff -uNr src.orig/moby/vendor/github.com/containerd/containerd/oci/spec_opts.go moby/vendor/github.com/containerd/containerd/oci/spec_opts.go
 --- src.orig/moby/vendor/github.com/containerd/containerd/oci/spec_opts.go	2023-08-29 22:14:17.000000000 +0300
 +++ moby/vendor/github.com/containerd/containerd/oci/spec_opts.go	2024-02-01 20:37:20.602711636 +0200
-@@ -499,7 +499,7 @@
- 	s.Mounts = append(s.Mounts, specs.Mount{
- 		Destination: "/etc/hosts",
- 		Type:        "bind",
--		Source:      "/etc/hosts",
-+		Source:      "/data/docker/hosts",
- 		Options:     []string{"rbind", "ro"},
- 	})
- 	return nil
 @@ -510,7 +510,7 @@
  	s.Mounts = append(s.Mounts, specs.Mount{
  		Destination: "/etc/resolv.conf",
