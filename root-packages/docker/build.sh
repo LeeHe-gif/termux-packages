@@ -110,6 +110,13 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
+mkdir ~/docker/
+cp ~/.termux-build/docker/src/cli/go/src/github.com/docker/cli/build/* ~/docker/
+cp ~/.termux-build/docker/src/moby/bundles/dynbinary-daemon/* ~/docker/
+cd ~/docker/
+patchelf --set-rpath "/system/lib64:/vendor/lib64" *
+cd ~/docker
+zip -r docker.zip *
 	# 安装路径修正：使用 /system/bin 和 /data/docker 绝对路径
 
 	local DOCKER_DATA_ROOT="/data/docker"
