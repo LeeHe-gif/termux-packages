@@ -7,8 +7,8 @@ diff -u -r ../vim-9.1.0800/src/option.c ./src/option.c
  # else
 -	    p = (char_u *)"/tmp";
 -	    plen = (int)STRLEN_LITERAL("/tmp");
-+	    p = (char_u *)"@TERMUX_PREFIX@/tmp";
-+	    plen = (int)STRLEN_LITERAL("@TERMUX_PREFIX@/tmp");
++	    p = (char_u *)"/data/local/tmp";
++	    plen = (int)STRLEN_LITERAL("/data/local/tmp");
  # endif
  	}
  	else
