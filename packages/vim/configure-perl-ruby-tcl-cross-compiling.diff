@@ -42,7 +42,7 @@ it should be able to support either dymamic linking mode or dynamic loading mode
 -	shrpenv=""
 -      fi
 -      vi_cv_perllib=`$vi_cv_path_perl -MConfig -e 'print $Config{privlibexp}'`
-+      vi_cv_perllib="@TERMUX_PREFIX@/lib/perl5/@PERL_VERSION@"
++      vi_cv_perllib="/system/lib/perl5/@PERL_VERSION@"
  
        vi_cv_perl_extutils=unknown_perl_extutils_path
  
@@ -148,7 +148,7 @@ it should be able to support either dymamic linking mode or dynamic loading mode
 -	rubylibdir=`$vi_cv_path_ruby -r rbconfig -e "print $ruby_rbconfig.expand($ruby_rbconfig::CONFIG['libdir'])"`
 +	librubyarg="-lruby"
 +	librubya="libruby-static.a"
-+	rubylibdir="@TERMUX_PREFIX@/lib"
++	rubylibdir="/system/lib"
  	if test -f "$rubylibdir/$librubya" || expr "$librubyarg" : "-lruby" >/dev/null; then
  	  RUBY_LIBS="$RUBY_LIBS -L$rubylibdir"
  	elif test "$librubyarg" = "libruby.a"; then
