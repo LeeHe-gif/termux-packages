@@ -14,10 +14,10 @@
 @@ -25,7 +25,7 @@
  		},
  		cli.StringFlag{
- 			Name:  "bundle, b",
+			 Name:  "bundle, b",
 -			Value: "",
 +			Value: "/data/docker/runc",
- 			Usage: "path to the root of the bundle directory",
+ 			Usage: `path to the root of the bundle directory, defaults to the current directory`,
  		},
  		cli.StringFlag{
 --- a/run.go
@@ -28,7 +28,7 @@
  			Name:  "bundle, b",
 -			Value: "",
 +			Value: "/data/docker/runc",
- 			Usage: "path to the root of the bundle directory",
+ 			Usage: `path to the root of the bundle directory, defaults to the current directory`,
  		},
  		cli.StringFlag{
 --- a/restore.go
