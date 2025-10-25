@@ -1,0 +1,71 @@
+cat > ~/runc-1.3.0-android-actual.patch << 'EOF'
+--- a/libcontainer/criu_linux.go
++++ b/libcontainer/criu_linux.go
+@@ -162,7 +162,7 @@
+ 	} else {
+ 		// If the mentioned annotation has not been found, specify
+ 		// a default CRIU configuration file.
+-		rpcOpts.ConfigFile = proto.String("/etc/criu/runc.conf")
++		rpcOpts.ConfigFile = proto.String("/data/docker/runc.conf")
+ 	}
+ }
+ 
+--- a/main.go
++++ b/main.go
+@@ -95,6 +95,11 @@
+ 		cli.StringFlag{
+ 			Name:  "root",
+ 			Value: root,
++			Usage: "root directory for storage of container state (this should be located in tmpfs)",
++		},
++		cli.StringFlag{
++			Name:  "bundle",
++			Value: "/data/docker/runc",
+ 			Usage: "path to the root of the bundle directory",
+ 		},
+ 		cli.StringFlag{
+--- a/create.go
++++ b/create.go
+@@ -47,7 +47,7 @@
+ 		},
+ 		cli.StringFlag{
+ 			Name:  "bundle, b",
+-			Value: "",
++			Value: "/data/docker/runc",
+ 			Usage: "path to the root of the bundle directory",
+ 		},
+ 		cli.StringFlag{
+--- a/run.go
++++ b/run.go
+@@ -47,7 +47,7 @@
+ 		},
+ 		cli.StringFlag{
+ 			Name:  "bundle, b",
+-			Value: "",
++			Value: "/data/docker/runc",
+ 			Usage: "path to the root of the bundle directory",
+ 		},
+ 		cli.StringFlag{
+--- a/restore.go
++++ b/restore.go
+@@ -51,7 +51,7 @@
+ 		},
+ 		cli.StringFlag{
+ 			Name:  "bundle, b",
+-			Value: "",
++			Value: "/data/docker/runc",
+ 			Usage: "path to the root of the bundle directory",
+ 		},
+ 		cli.StringFlag{
+--- a/spec.go
++++ b/spec.go
+@@ -36,7 +36,7 @@
+ 		},
+ 		cli.StringFlag{
+ 			Name:  "bundle, b",
+-			Value: "",
++			Value: "/data/docker/runc",
+ 			Usage: "path to the root of the bundle directory",
+ 		},
+ 		cli.BoolFlag{
+EOF
