@@ -14,7 +14,7 @@
 @@ -25,7 +25,7 @@
  		},
  		cli.StringFlag{
-			 Name:  "bundle, b",
+			Name:  "bundle, b",
 -			Value: "",
 +			Value: "/data/docker/runc",
  			Usage: `path to the root of the bundle directory, defaults to the current directory`,
