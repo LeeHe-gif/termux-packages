@@ -42,10 +42,6 @@ fi
 		exit 1
 	fi
 
-	if [ -d "$TERMUX_TOPDIR" ]; then
-		chmod +w -R "$TERMUX_TOPDIR" || true
-	fi
-
 	# For on-device build cleanup Termux app data directory shouldn't be erased.
 	if [[ "$TERMUX_ON_DEVICE_BUILD" == "false" ]]; then
 		for variable_name in TERMUX__PREFIX TERMUX_APP__DATA_DIR CGCT_DIR; do
