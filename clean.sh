@@ -92,6 +92,4 @@ fi
 		# Remove list of built packages.
 		rm -Rf "/data/data/.built-packages"
 	fi
-
-	rm -Rf "$TERMUX_TOPDIR"
 } 5< "$TERMUX_BUILD_LOCK_FILE"
