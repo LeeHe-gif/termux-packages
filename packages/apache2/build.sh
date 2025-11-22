@@ -31,9 +31,9 @@ TERMUX_PKG_AUTO_UPDATE=true
 
 # providing manual paths to libs because it picks up host libs on some systems
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
---with-apr=$TERMUX_PREFIX
---with-apr-util=$TERMUX_PREFIX
---with-pcre=$TERMUX_PREFIX
+--with-apr=/system
+--with-apr-util=/system
+--with-pcre=/system
 --enable-suexec
 --enable-layout=Termux
 --enable-so
@@ -67,7 +67,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --with-sslport=8443
 --enable-unixd
 --without-libxml2
---libexecdir=$TERMUX_PREFIX/libexec/apache2
+--libexecdir=/system/libexec/apache2
 ac_cv_func_getpwnam=yes
 ac_cv_have_threadsafe_pollset=no
 ac_cv_prog_PCRE_CONFIG=pcre2-config
