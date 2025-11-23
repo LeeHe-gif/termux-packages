@@ -1,7 +1,6 @@
 TERMUX_PKG_HOMEPAGE=https://httpd.apache.org
 TERMUX_PKG_DESCRIPTION="Apache Web Server"
 TERMUX_PKG_LICENSE="Apache-2.0"
-TERMUX_PKG_MAINTAINER="@termux"
 TERMUX_PKG_VERSION="1:2.4.65"
 TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://downloads.apache.org/httpd/httpd-${TERMUX_PKG_VERSION#*:}.tar.bz2
@@ -31,6 +30,9 @@ TERMUX_PKG_AUTO_UPDATE=true
 
 # providing manual paths to libs because it picks up host libs on some systems
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
+--prefix=/system
+--bindir=/system/bin
+--sbindir=/system/bin
 --with-apr=/system
 --with-apr-util=/system
 --with-pcre=/system
@@ -67,6 +69,9 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --with-sslport=8443
 --enable-unixd
 --without-libxml2
+--with-default-path=/system/bin
+--with-default-shell=/system/bin/sh
+--with-superuser-path=/system/bin
 --libexecdir=/system/libexec/apache2
 ac_cv_func_getpwnam=yes
 ac_cv_have_threadsafe_pollset=no
